@@ -1,0 +1,5 @@
+/spark
+/venv
+/aws-credentials.txt
+.DS_Store
+/command.txt
