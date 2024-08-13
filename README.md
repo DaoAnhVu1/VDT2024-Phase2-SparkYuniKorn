@@ -9,7 +9,7 @@ minikube start
 ## Step 2: Set up minikube
 There are several things we need to set up on our k8s to run spark job.
 - Create a namespace:  
-  ```sh˝
+  ```sh
   kubectl create namespace spark
   ```
 
@@ -52,6 +52,7 @@ docker build -t spark-yunikorn-docker-image ./spark-yunikorn-docker-image
 In this demo, there are 2 ways to submit spark job to K8s
 
 ### Use spark-on-k8s python packages
+To submit your Spark application to the Kubernetes cluster using spark-on-k8s, ensure that your kubectl is properly configured, as the submission will rely on it. Once kubectl is correctly set up, you can submit your Spark application with the following command:
 ```sh
 python ./submit-script/submit.py
 ```
@@ -59,22 +60,21 @@ python ./submit-script/submit.py
 ### Use command line with Apache Spark
 ```sh
 ./spark/bin/spark-submit \
---master k8s://https://127.0.0.1:65168 \
+--master k8s://https://cluster-ip:cluster-port \
 --deploy-mode cluster \
 --name aws-s3 \
 --conf spark.kubernetes.container.image=spark-yunikorn-docker-image \
 --conf spark.kubernetes.namespace=spark \
 --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
 --conf spark.kubernetes.container.image.pullPolicy=Never \
---conf spark.driver.memory=1024m \
+--conf spark.driver.memory=512m \
 --conf spark.driver.cores=1 \
---conf spark.executor.memory=1024m \
+--conf spark.executor.memory=512m \
 --conf spark.executor.cores=1 \
 --conf spark.kubernetes.driverEnv.AWS_ACCESS=your_key \
 --conf spark.kubernetes.driverEnv.AWS_SECRET=your_key \
---conf spark.kubernetes.executorEnv.AWS_ACCESS=your_key\
+--conf spark.kubernetes.executorEnv.AWS_ACCESS=your_key \
 --conf spark.kubernetes.executorEnv.AWS_SECRET=your_key \
---conf spark.driver.extraJavaOptions="-Divy.cache.dir=/tmp -Divy.home=/tmp" \
 local:///opt/spark/source/code.py
 
 ```

@@ -4,8 +4,8 @@ import logging
 
 from spark_on_k8s.client import ExecutorInstances, PodResources, SparkOnK8S
 
-aws_access = 'your key'
-aws_secret = 'your key'
+aws_access = 'hello'
+aws_secret = 'hi'
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

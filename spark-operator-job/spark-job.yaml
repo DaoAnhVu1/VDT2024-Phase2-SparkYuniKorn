@@ -1,0 +1,29 @@
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: aws-s3
+  namespace: spark
+spec:
+  type: Python
+  mode: cluster
+  image: spark-yunikorn-docker-image
+  mainApplicationFile: local:///opt/spark/source/code.py
+  sparkVersion: 3.5.2
+  restartPolicy:
+    type: OnFailure
+  driver:
+    cores: 1
+    memory: 512m
+    serviceAccount: spark
+    labels:
+      version: 3.5.2
+    envVars:
+      AWS_ACCESS: "your_key"
+      AWS_SECRET: "your_key"
+  executor:
+    cores: 1
+    memory: 512m
+    instances: 1
+    envVars:
+      AWS_ACCESS: "your_key"
+      AWS_SECRET: "your_key"

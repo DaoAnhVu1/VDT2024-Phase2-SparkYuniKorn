@@ -5,6 +5,11 @@ import os
 aws_access = os.getenv('AWS_ACCESS', 'hello')
 aws_secret = os.getenv('AWS_SECRET', 'hi')
 
+print()
+print(aws_access)
+print(aws_secret)
+print()
+
 spark = SparkSession.builder \
     .appName("aws_s3") \
     .getOrCreate()
