@@ -1,0 +1,16 @@
+partitions:
+  - name: default
+    queues:
+      - name: root
+        submitacl: "*"
+        adminacl: "*"
+        queues:
+          - name: spark
+            maxapplications: 5
+            resources:
+              guaranteed: { memory: 1G, vcore: 1 }
+          - name: other-1
+            maxapplications: 5
+            resources:
+              guaranteed: { memory: 1G, vcore: 1 }
+              max: { memory: 2G, vcore: 2 }

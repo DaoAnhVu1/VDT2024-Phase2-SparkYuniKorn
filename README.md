@@ -32,8 +32,11 @@ To set up Yunikorn as the main resource scheduler for K8s, we will run:
 helm repo add yunikorn https://apache.github.io/yunikorn-release
 helm repo update
 kubectl create namespace yunikorn
+kubectl create configmap yunikorn-configs --from-file=./yunikorn-queue/queues.yaml -n yunikorn
 helm install yunikorn yunikorn/yunikorn --namespace yunikorn
 ```
+
+With this setup, we have created 2 hierachy queues which are root.spark and root.other-1
 
 
 ## Step 4: Build Spark Docker image for minikube
@@ -51,12 +54,6 @@ docker build -t spark-yunikorn-docker-image ./spark-yunikorn-docker-image
 ## Step 5: Submit spark job to k8s
 In this demo, there are 2 ways to submit spark job to K8s
 
-### Use spark-on-k8s python packages
-To submit your Spark application to the Kubernetes cluster using spark-on-k8s, ensure that your kubectl is properly configured, as the submission will rely on it. Once kubectl is correctly set up, you can submit your Spark application with the following command:
-```sh
-python ./submit-script/submit.py
-```
-
 ### Use command line with Apache Spark
 ```sh
 ./spark/bin/spark-submit \
@@ -71,10 +68,28 @@ python ./submit-script/submit.py
 --conf spark.driver.cores=1 \
 --conf spark.executor.memory=512m \
 --conf spark.executor.cores=1 \
+--conf spark.kubernetes.driver.label.queue=root.spark \
 --conf spark.kubernetes.driverEnv.AWS_ACCESS=your_key \
 --conf spark.kubernetes.driverEnv.AWS_SECRET=your_key \
 --conf spark.kubernetes.executorEnv.AWS_ACCESS=your_key \
 --conf spark.kubernetes.executorEnv.AWS_SECRET=your_key \
 local:///opt/spark/source/code.py
+```
 
+### Apply with Spark Operation
+First of all, we need to install Spark Operator
+```sh
+helm repo add spark-operator https://kubeflow.github.io/spark-operator
+
+helm install spark-operator spark-operator/spark-operator \
+    --namespace spark-operator \
+    --create-namespace
+```
+After this, we will apply the spark job
+```sh
+kubectl apply -f ./spark-operator-job/spark-job.yaml
+
+kubectl get sparkapplications -n spark
+
+kubectl delete sparkapplication aws-s3 -n spark
 ```
