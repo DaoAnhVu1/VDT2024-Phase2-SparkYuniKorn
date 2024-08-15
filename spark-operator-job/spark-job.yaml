@@ -17,15 +17,40 @@ spec:
     serviceAccount: spark
     annotations:
       yunikorn.apache.org/queue: root.spark
+      yunikorn.apache.org/schedulingPolicyParameters: "placeholderTimeoutInSeconds=30 gangSchedulingStyle=Soft"
+      yunikorn.apache.org/task-group-name: "spark-driver"
+      yunikorn.apache.org/task-groups: |-
+        [{
+            "name": "spark-driver",
+            "minMember": 1,
+            "minResource": {
+              "cpu": "1",
+              "memory": "1Gi"
+            },
+            "nodeSelector": {},
+            "tolerations": [],
+            "affinity": {},
+            "topologySpreadConstraints": []
+         },
+         {
+            "name": "spark-executor",
+            "minMember": 1,
+            "minResource": {
+              "cpu": "1",
+              "memory": "1Gi"
+            }
+         }]
     labels:
       version: 3.5.2
     envVars:
-      AWS_ACCESS: "your_key"
-      AWS_SECRET: "your_key"
+      AWS_ACCESS: "your key"
+      AWS_SECRET: "your key"
   executor:
     cores: 1
     memory: 512m
     instances: 1
+    annotations:
+      yunikorn.apache.org/task-group-name: "spark-executor"
     envVars:
-      AWS_ACCESS: "your_key"
-      AWS_SECRET: "your_key"
+      AWS_ACCESS: "your key"
+      AWS_SECRET: "your key"
