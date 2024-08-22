@@ -46,7 +46,7 @@ helm repo update
 
 kubectl create namespace yunikorn
 
-kubectl create configmap yunikorn-configs --from-file=./yunikorn-queue/queues.yaml -n yunikorn
+kubectl create configmap yunikorn-configs --from-file=./yunikorn-queue-config/queues.yaml -n yunikorn
 
 helm install yunikorn yunikorn/yunikorn --namespace yunikorn
 
