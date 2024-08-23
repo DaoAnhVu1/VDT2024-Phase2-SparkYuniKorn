@@ -4,3 +4,4 @@
 .DS_Store
 /command.txt
 node_modules/
+test.js
