@@ -13,7 +13,7 @@ export default function Sidebar() {
     ]
 
     return (
-        <div className="w-60 fixed h-screen bg-[#e8e4e4] flex flex-col items-center p-5">
+        <div className="w-60 fixed h-screen bg-gray-300 flex flex-col items-center p-5">
             <div className="relative w-full h-20">
                 <Image src={ViettelLogo} alt="Logo" fill className="object-contain" />
             </div>
