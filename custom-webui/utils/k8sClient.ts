@@ -28,6 +28,31 @@ class K8sClient {
             throw error;
         }
     }
+
+    public async createConfigMap(namespace: string, configMapName: string, data: any): Promise<V1ConfigMap> {
+        try {
+            // Check if the ConfigMap already exists
+            const existingConfigMap = await this.getConfigMap(namespace, configMapName);
+            if (existingConfigMap) {
+                await this.coreApi.deleteNamespacedConfigMap(configMapName, namespace);
+            }
+
+            const newConfigMap: V1ConfigMap = {
+                apiVersion: 'v1',
+                kind: 'ConfigMap',
+                metadata: {
+                    name: configMapName,
+                    namespace: namespace
+                },
+                data
+            };
+            const response = await this.coreApi.createNamespacedConfigMap(namespace, newConfigMap);
+            return response.body;
+        } catch (error) {
+            console.error(`Error creating ConfigMap ${configMapName} in namespace ${namespace}:`, error);
+            throw error;
+        }
+    }
 }
 
 export default K8sClient;
