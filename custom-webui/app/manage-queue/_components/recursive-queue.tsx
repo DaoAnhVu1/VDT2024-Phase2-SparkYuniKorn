@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import { CirclePlus, CircleMinus, Pencil } from "lucide-react";
+import { useModal } from "@/hooks/useModal";
 
 interface RecursiveQueueProps {
     root?: any[];
+    partitionName: any;
+    level: number;
 }
 
-const RecursiveQueue = ({ root }: RecursiveQueueProps) => {
+const RecursiveQueue = ({ root, partitionName, level }: RecursiveQueueProps) => {
     const [selectedQueue, setSelectedQueue] = useState<any>(null);
-
+    const { onOpen } = useModal()
     if (root == null) {
         return null;
     }
@@ -32,7 +35,9 @@ const RecursiveQueue = ({ root }: RecursiveQueueProps) => {
                     >
                         <p>{node.name}</p>
                         <div className="flex items-center gap-2">
-                            <Pencil className="h-5" />
+                            <Pencil className="h-5" onClick={() => {
+                                onOpen("editQueue", { queueInfo: node, partitionName, level })
+                            }} />
                             {node.queues && (
                                 selectedQueue === node ? (
                                     <CircleMinus
@@ -51,7 +56,7 @@ const RecursiveQueue = ({ root }: RecursiveQueueProps) => {
                 ))}
             </div>
             {selectedQueue && (
-                <RecursiveQueue root={selectedQueue.queues} />
+                <RecursiveQueue root={selectedQueue.queues} partitionName={partitionName} level={level + 1} />
             )}
         </>
     );

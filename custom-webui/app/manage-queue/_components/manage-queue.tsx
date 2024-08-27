@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import PartitionManagement from "./partition-management";
 import RecursiveQueue from "./recursive-queue";
 import EditPartitionModal from "@/components/modals/edit-partition-modal";
+import EditQueueModal from "@/components/modals/edit-queue-modal";
 
 interface ManageQueueProps {
     configMapObject: any
@@ -55,8 +56,9 @@ export default function ManageQueue({ configMapObject }: ManageQueueProps) {
             <div className="mt-5">
                 {selectedQueues ? (
                     <div className="flex gap-3">
-                        <RecursiveQueue root={selectedQueues} />
+                        <RecursiveQueue root={selectedQueues} partitionName={selectedPartition.name} level={0} />
                         <EditPartitionModal />
+                        <EditQueueModal />
                     </div>
                 ) : (
                     <div className="h-full w-full flex justify-center items-center">
