@@ -1,11 +1,9 @@
 export default function Info() {
     return (
-        <div>
-            <h1 className="text-2xl font-semibold mb-5 h-20 flex justify-center items-center">Info</h1>
-
-            <div>
-
-            </div>
+        <div className="p-5 flex flex-col min-h-screen h-screen">
+            <h1 className="text-2xl font-semibold mb-5 flex justify-center items-center h-20">
+                Info
+            </h1>
         </div>
     )
 }

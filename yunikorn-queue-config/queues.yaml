@@ -14,3 +14,7 @@ partitions:
             resources:
               guaranteed: { memory: 1G, vcore: 1 }
               max: { memory: 2G, vcore: 2 }
+    placementrules:
+      - name: tag
+        value: namespace
+        create: true

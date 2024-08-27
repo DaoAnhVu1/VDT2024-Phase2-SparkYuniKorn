@@ -32,7 +32,7 @@ There are several things we need to set up on our k8s to run spark job.
 
     helm install spark-operator spark-operator/spark-operator \
     --namespace spark-operator \
-    --create-namespace
+    --create-namespace \
 
     kubectl get pods -n spark-operator
     ```
