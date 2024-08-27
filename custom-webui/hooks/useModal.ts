@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type ModalType = "editPartition" | "editQueue"
+export type ModalType = "editPartition" | "editQueue" | "createChild" | "deleteQueue"
 
 interface ModalStore {
     type: ModalType | null;

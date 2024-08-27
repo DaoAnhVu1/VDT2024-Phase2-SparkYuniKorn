@@ -20,6 +20,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useToast } from "../ui/use-toast";
 
 // Define the schema
 const formSchema = z.object({
@@ -39,6 +40,7 @@ interface EditPartitionFormProps {
 
 export default function EditPartitionForm({ data, onClose }: EditPartitionFormProps) {
     const router = useRouter()
+    const { toast } = useToast()
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -49,11 +51,18 @@ export default function EditPartitionForm({ data, onClose }: EditPartitionFormPr
     });
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        let finalResult = { currentName: data.name, newConfig: { ...values } }
-        console.log(finalResult)
-        await axios.patch("/api/partition", finalResult)
-        router.refresh()
-        onClose()
+        try {
+            let finalResult = { currentName: data.name, newConfig: { ...values } }
+            console.log(finalResult)
+            await axios.patch("/api/partition", finalResult)
+            router.refresh()
+            onClose()
+        } catch (error) {
+            toast({
+                title: "Failed to change queue config",
+                description: "Please make sure the input is correct and follow the rule of Yunikorn",
+            })
+        }
     };
 
     return (

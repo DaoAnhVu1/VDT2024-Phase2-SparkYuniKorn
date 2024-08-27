@@ -1,3 +1,4 @@
+"use client";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
+import { useModal } from "@/hooks/useModal";
 
 const resourceSchema = z.object({
     vcore: z.number().optional(),
@@ -38,6 +41,8 @@ interface EditQueueFormProps {
 }
 
 const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFormProps) => {
+    const { toast } = useToast();
+    const { onOpen } = useModal();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -58,19 +63,28 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
         }
     });
 
-    const router = useRouter()
+    const router = useRouter();
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        const finalResult = { partitionName, oldName: queueInfo.name, queueInfo: values, level };
-        console.log(finalResult);
-        await axios.patch("/api/queue", finalResult);
-        onClose();
-        window.location.reload()
+        try {
+            const finalResult = { partitionName, oldName: queueInfo.name, queueInfo: values, level };
+            console.log(finalResult);
+            await axios.patch("/api/queue", finalResult);
+            onClose();
+            window.location.reload()
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: "Failed to Change Queue Config",
+                description: "There was an error updating the queue configuration. Please try again.",
+                variant: "destructive"
+            });
+        }
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} >
+            <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="space-y-6 max-h-[500px] overflow-y-scroll p-3">
                     <FormField
                         control={form.control}
@@ -93,10 +107,15 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                             <FormItem>
                                 <FormLabel>Max Applications</FormLabel>
                                 <FormControl>
-                                    <Input type="number" placeholder="Max Applications" onChange={(event) => {
-                                        const value = event.target.value ? parseInt(event.target.value) : 0;
-                                        field.onChange(value);
-                                    }} value={field.value} />
+                                    <Input
+                                        type="number"
+                                        placeholder="Max Applications"
+                                        onChange={(event) => {
+                                            const value = event.target.value ? parseInt(event.target.value) : 0;
+                                            field.onChange(value);
+                                        }}
+                                        value={field.value}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -141,7 +160,15 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                                     <FormItem>
                                         <FormLabel>Guaranteed VCore</FormLabel>
                                         <FormControl>
-                                            <Input type="number" placeholder="Guaranteed VCore" {...field} />
+                                            <Input
+                                                type="number"
+                                                placeholder="Guaranteed VCore"
+                                                onChange={(event) => {
+                                                    const value = event.target.value ? parseInt(event.target.value) : 0;
+                                                    field.onChange(value);
+                                                }}
+                                                value={field.value}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -169,7 +196,15 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                                     <FormItem>
                                         <FormLabel>Max VCore</FormLabel>
                                         <FormControl>
-                                            <Input type="number" placeholder="Max VCore" {...field} />
+                                            <Input
+                                                type="number"
+                                                placeholder="Max VCore"
+                                                onChange={(event) => {
+                                                    const value = event.target.value ? parseInt(event.target.value) : 0;
+                                                    field.onChange(value);
+                                                }}
+                                                value={field.value}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -193,8 +228,30 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                     )}
                 </div>
 
-                <div className="text-end mt-5">
-                    <Button type="submit" disabled={form.formState.isSubmitting}>Save</Button>
+                <div className="flex flex-row-reverse gap-3 text-end mt-5">
+                    <Button type="submit" disabled={form.formState.isSubmitting}>
+                        Save
+                    </Button>
+
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                            onOpen("createChild", { parentName: queueInfo.name, maxapplications: queueInfo.maxapplications });
+                        }}
+                    >
+                        Create child
+                    </Button>
+
+                    <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={() => {
+                            onOpen("deleteQueue", { name: queueInfo.name, partitionName });
+                        }}
+                    >
+                        Delete
+                    </Button>
                 </div>
             </form>
         </Form>

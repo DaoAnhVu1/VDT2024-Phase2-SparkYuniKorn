@@ -6,6 +6,8 @@ import PartitionManagement from "./partition-management";
 import RecursiveQueue from "./recursive-queue";
 import EditPartitionModal from "@/components/modals/edit-partition-modal";
 import EditQueueModal from "@/components/modals/edit-queue-modal";
+import CreateChildModal from "@/components/modals/create-child-modal";
+import DeleteQueueModal from "@/components/modals/delete-queue-modal";
 
 interface ManageQueueProps {
     configMapObject: any
@@ -59,6 +61,8 @@ export default function ManageQueue({ configMapObject }: ManageQueueProps) {
                         <RecursiveQueue root={selectedQueues} partitionName={selectedPartition.name} level={0} />
                         <EditPartitionModal />
                         <EditQueueModal />
+                        <CreateChildModal />
+                        <DeleteQueueModal />
                     </div>
                 ) : (
                     <div className="h-full w-full flex justify-center items-center">
