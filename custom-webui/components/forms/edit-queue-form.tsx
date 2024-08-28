@@ -11,6 +11,13 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -22,6 +29,15 @@ const resourceSchema = z.object({
     memory: z.string().optional(),
 });
 
+const propertiesSchema = z.object({
+    applicationSortPolicy: z.string(),
+    applicationSortPriority: z.string(),
+    priorityPolicy: z.string(),
+    priorityOffset: z.number(),
+    preemptionPolicy: z.string(),
+    preemptionDelay: z.number()
+});
+
 const formSchema = z.object({
     name: z.string(),
     maxapplications: z.number().int().nonnegative(),
@@ -30,7 +46,8 @@ const formSchema = z.object({
     resources: z.object({
         guaranteed: resourceSchema,
         max: resourceSchema,
-    }).optional(), // Mark resources as optional in the schema
+    }).optional(),
+    properties: propertiesSchema.optional()
 });
 
 interface EditQueueFormProps {
@@ -41,6 +58,7 @@ interface EditQueueFormProps {
 }
 
 const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFormProps) => {
+    console.log(queueInfo)
     const { toast } = useToast();
     const { onOpen } = useModal();
     const form = useForm<z.infer<typeof formSchema>>({
@@ -59,16 +77,22 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                     vcore: queueInfo?.resources?.max?.vcore || 0,
                     memory: queueInfo?.resources?.max?.memory || ""
                 }
-            } : undefined // Do not set resources if level is 0
+            } : undefined,
+            properties: {
+                applicationSortPolicy: queueInfo?.properties?.["application.sort.policy"] || "fifo",
+                applicationSortPriority: queueInfo?.properties?.["application.sort.priority"] || "enabled",
+                priorityPolicy: queueInfo?.properties?.["priority.policy"] || "default",
+                priorityOffset: queueInfo?.properties?.["priority.offset"] || 0,
+                preemptionPolicy: queueInfo?.properties?.["preemption.policy"] || "default",
+                preemptionDelay: queueInfo?.properties?.["preemption.delay"] || 30
+            }
         }
     });
 
-    const router = useRouter();
-
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
+            console.log(values)
             const finalResult = { partitionName, oldName: queueInfo.name, queueInfo: values, level };
-            console.log(finalResult);
             await axios.patch("/api/queue", finalResult);
             onClose();
             window.location.reload()
@@ -150,7 +174,6 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                         )}
                     />
 
-                    {/* Conditionally render resource fields only if level is not 0 */}
                     {level !== 0 && (
                         <>
                             <FormField
@@ -224,8 +247,145 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                                     </FormItem>
                                 )}
                             />
+
+
                         </>
                     )}
+
+
+                    <FormField
+                        control={form.control}
+                        name="properties.applicationSortPolicy"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Application Sort Policy</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Application Sort Policy" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="fifo">FIFO</SelectItem>
+                                        <SelectItem value="fair">FAIR</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+
+                    <FormField
+                        control={form.control}
+                        name="properties.applicationSortPriority"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Application Sort Priority</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Application Sort Priority" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="enabled">Enabled</SelectItem>
+                                        <SelectItem value="disabled">Disabled</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="properties.priorityPolicy"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Priority Policy</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Priority Policy" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="default">default</SelectItem>
+                                        <SelectItem value="fence">fence</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="properties.priorityOffset"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Priority Offset</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="number"
+                                        placeholder="Priority Offset"
+                                        onChange={(event) => {
+                                            const value = event.target.value ? parseInt(event.target.value) : 0;
+                                            field.onChange(value);
+                                        }}
+                                        value={field.value}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="properties.preemptionPolicy"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Preemption Policy</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Preemption Policy" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="default">default</SelectItem>
+                                        <SelectItem value="fence">fence</SelectItem>
+                                        <SelectItem value="disable">disable</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="properties.preemptionDelay"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Preemption Delay</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="number"
+                                        placeholder="PreemptionDelay"
+                                        onChange={(event) => {
+                                            const value = event.target.value ? parseInt(event.target.value) : 0;
+                                            field.onChange(value);
+                                        }}
+                                        value={field.value}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                 </div>
 
                 <div className="flex flex-row-reverse gap-3 text-end mt-5">
@@ -253,8 +413,8 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                         Delete
                     </Button>
                 </div>
-            </form>
-        </Form>
+            </form >
+        </Form >
     );
 }
 

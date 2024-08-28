@@ -3,38 +3,34 @@ import { V1ConfigMap } from "@kubernetes/client-node";
 import { NextResponse, NextRequest } from "next/server";
 import YAML from "yaml";
 
-interface QueueResources {
-    guaranteed?: {
-        vcore?: number;
-        memory?: string;
-    };
-    max?: {
-        vcore?: number;
-        memory?: string;
-    };
-}
-
 interface QueueConfig {
     name: string;
     maxapplications?: number;
     submitacl?: string;
     adminacl?: string;
-    resources?: QueueResources;
+    resources?: {
+        guaranteed?: {
+            vcore?: number;
+            memory?: string;
+        };
+        max?: {
+            vcore?: number;
+            memory?: string;
+        };
+    };
+    properties?: {
+        applicationSortPolicy: string;
+        applicationSortPriority: string;
+        priorityPolicy: string;
+        priorityOffset: number;
+        preemptionPolicy: string;
+        preemptionDelay: number;
+    };
     queues?: QueueConfig[];
 }
-
-interface QueueInfo {
-    name: string;
-    maxapplications: number;
-    submitacl: string;
-    adminacl: string;
-    resources?: QueueResources;
-}
-
 export async function PATCH(req: Request) {
     try {
         const { queueInfo, partitionName, level, oldName } = await req.json();
-
         const configMap: V1ConfigMap | null = await K8sClient.getInstance().getConfigMap("yunikorn", "yunikorn-configs");
         if (!configMap || !configMap.data) throw new Error("ConfigMap or its data is null");
 
@@ -46,16 +42,12 @@ export async function PATCH(req: Request) {
 
         let queue = findQueue(partition.queues, oldName);
         if (!queue) throw new Error(`Queue '${oldName}' not found`);
-
         updateQueueConfig(queue, queueInfo, level);
 
         const updatedConfigMapData = YAML.stringify(configMapObject);
         console.log("Updated ConfigMap Data:", updatedConfigMapData);
-
         configMap.data["queues.yaml"] = updatedConfigMapData;
         await K8sClient.getInstance().createConfigMap("yunikorn", "yunikorn-configs", configMap.data);
-
-        console.log("Queue successfully updated.");
         return NextResponse.json({}, { status: 200 });
     } catch (error) {
         console.error("Error updating queue:", error);
@@ -158,7 +150,9 @@ function createChildQueueConfig(parentQueue: QueueConfig, childName: string, max
     parentQueue.queues.push(newChildQueue);
 }
 
-function updateQueueConfig(queue: QueueConfig, queueInfo: QueueInfo, level: number): void {
+function updateQueueConfig(queue: any, queueInfo: QueueConfig, level: number): void {
+    console.log("BEFORE", queue)
+
     if (queueInfo.name) queue.name = queueInfo.name.trim();
 
     if (queueInfo.maxapplications) queue.maxapplications = queueInfo.maxapplications;
@@ -194,8 +188,42 @@ function updateQueueConfig(queue: QueueConfig, queueInfo: QueueInfo, level: numb
         else delete queue.resources.max.vcore;
     } else delete queue.resources.max;
 
+    if (!queue.properties) {
+        queue.properties = {};
+    }
+
+    if (queueInfo?.properties) {
+        if (queueInfo.properties.applicationSortPolicy) {
+            queue.properties["application.sort.policy"] = queueInfo.properties.applicationSortPolicy;
+        }
+
+        if (queueInfo.properties.applicationSortPriority) {
+            queue.properties["application.sort.priority"] = queueInfo.properties.applicationSortPriority
+        }
+
+        if (queueInfo.properties.priorityPolicy) {
+            queue.properties["priority.offset"] = queueInfo.properties.priorityOffset
+        }
+
+        if (queueInfo.properties.priorityPolicy) {
+            queue.properties["priority.policy"] = queueInfo.properties.priorityPolicy
+        }
+
+        if (queueInfo.properties.preemptionDelay) {
+            queue.properties["preemption.delay"] = queueInfo.properties.preemptionDelay
+        }
+
+        if (queueInfo.properties.preemptionPolicy) {
+            queue.properties["preemption.policy"] = queueInfo.properties.preemptionPolicy
+        }
+    } else {
+        delete queue.properties;
+    }
+
     if (level === 0) {
         delete queue.resources?.guaranteed;
         delete queue.resources?.max;
     }
+
+    console.log("AFTER", queue)
 }
