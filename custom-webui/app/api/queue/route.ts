@@ -47,7 +47,7 @@ export async function PATCH(req: Request) {
         const updatedConfigMapData = YAML.stringify(configMapObject);
         console.log("Updated ConfigMap Data:", updatedConfigMapData);
         configMap.data["queues.yaml"] = updatedConfigMapData;
-        await K8sClient.getInstance().createConfigMap("yunikorn", "yunikorn-configs", configMap.data);
+        await K8sClient.getInstance().updateConfigMap("yunikorn", "yunikorn-configs", configMap.data);
         return NextResponse.json({}, { status: 200 });
     } catch (error) {
         console.error("Error updating queue:", error);
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
         console.log("Updated ConfigMap Data:", updatedConfigMapData);
 
         configMap.data["queues.yaml"] = updatedConfigMapData;
-        await K8sClient.getInstance().createConfigMap("yunikorn", "yunikorn-configs", configMap.data);
+        await K8sClient.getInstance().updateConfigMap("yunikorn", "yunikorn-configs", configMap.data);
 
         console.log("Queue successfully created.");
         return NextResponse.json({}, { status: 200 });
@@ -110,7 +110,7 @@ export async function DELETE(req: NextRequest) {
         console.log("Updated ConfigMap Data:", updatedConfigMapData);
 
         configMap.data["queues.yaml"] = updatedConfigMapData;
-        await K8sClient.getInstance().createConfigMap("yunikorn", "yunikorn-configs", configMap.data);
+        await K8sClient.getInstance().updateConfigMap("yunikorn", "yunikorn-configs", configMap.data);
 
         console.log("Queue successfully deleted.");
         return NextResponse.json({}, { status: 200 });
@@ -151,7 +151,6 @@ function createChildQueueConfig(parentQueue: QueueConfig, childName: string, max
 }
 
 function updateQueueConfig(queue: any, queueInfo: QueueConfig, level: number): void {
-    console.log("BEFORE", queue)
 
     if (queueInfo.name) queue.name = queueInfo.name.trim();
 
@@ -170,23 +169,51 @@ function updateQueueConfig(queue: any, queueInfo: QueueConfig, level: number): v
         const guaranteed = queueInfo.resources.guaranteed;
         queue.resources.guaranteed = queue.resources.guaranteed || {};
 
-        if (guaranteed.memory) queue.resources.guaranteed.memory = guaranteed.memory.trim();
-        else delete queue.resources.guaranteed.memory;
+        if (guaranteed.memory && guaranteed.memory.trim() !== "" && guaranteed.memory.trim() !== "0") {
+            queue.resources.guaranteed.memory = guaranteed.memory.trim();
+        } else {
+            delete queue.resources.guaranteed.memory;
+        }
 
-        if (guaranteed.vcore) queue.resources.guaranteed.vcore = guaranteed.vcore;
-        else delete queue.resources.guaranteed.vcore;
-    } else delete queue.resources.guaranteed;
+        if (guaranteed.vcore && guaranteed.vcore !== 0) {
+            queue.resources.guaranteed.vcore = guaranteed.vcore;
+        } else {
+            delete queue.resources.guaranteed.vcore;
+        }
+        if (Object.keys(queue.resources.guaranteed).length === 0) {
+            delete queue.resources.guaranteed;
+        }
+    } else {
+        delete queue.resources.guaranteed;
+    }
 
     if (queueInfo.resources?.max) {
         const max = queueInfo.resources.max;
         queue.resources.max = queue.resources.max || {};
 
-        if (max.memory) queue.resources.max.memory = max.memory.trim();
-        else delete queue.resources.max.memory;
+        if (max.memory && max.memory.trim() !== "" && max.memory.trim() !== "0") {
+            queue.resources.max.memory = max.memory.trim();
+        } else {
+            delete queue.resources.max.memory;
+        }
 
-        if (max.vcore) queue.resources.max.vcore = max.vcore;
-        else delete queue.resources.max.vcore;
-    } else delete queue.resources.max;
+        if (max.vcore && max.vcore !== 0) {
+            queue.resources.max.vcore = max.vcore;
+        } else {
+            delete queue.resources.max.vcore;
+        }
+
+        if (Object.keys(queue.resources.max).length === 0) {
+            delete queue.resources.max;
+        }
+    } else {
+        delete queue.resources.max;
+    }
+
+    if (Object.keys(queue.resources).length === 0) {
+        delete queue.resources;
+    }
+
 
     if (!queue.properties) {
         queue.properties = {};

@@ -82,9 +82,9 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                 applicationSortPolicy: queueInfo?.properties?.["application.sort.policy"] || "fifo",
                 applicationSortPriority: queueInfo?.properties?.["application.sort.priority"] || "enabled",
                 priorityPolicy: queueInfo?.properties?.["priority.policy"] || "default",
-                priorityOffset: queueInfo?.properties?.["priority.offset"] || 0,
+                priorityOffset: parseInt(queueInfo?.properties?.["priority.offset"]) || 0,
                 preemptionPolicy: queueInfo?.properties?.["preemption.policy"] || "default",
-                preemptionDelay: queueInfo?.properties?.["preemption.delay"] || 30
+                preemptionDelay: parseInt(queueInfo?.properties?.["preemption.delay"]) || 30
             }
         }
     });

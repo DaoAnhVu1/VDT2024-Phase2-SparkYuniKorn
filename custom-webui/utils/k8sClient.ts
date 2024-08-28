@@ -29,16 +29,29 @@ class K8sClient {
         }
     }
 
-    public async createConfigMap(namespace: string, configMapName: string, data: any): Promise<V1ConfigMap> {
-        let originalConfigMap: V1ConfigMap | null = null;
-
+    public async updateConfigMap(namespace: string, configMapName: string, data: any): Promise<V1ConfigMap> {
         try {
-            originalConfigMap = await this.getConfigMap(namespace, configMapName);
-            if (originalConfigMap) {
-                await this.coreApi.deleteNamespacedConfigMap(configMapName, namespace);
+            // Fetch the existing ConfigMap
+            const originalConfigMap = await this.getConfigMap(namespace, configMapName);
+
+            // If the ConfigMap does not exist, create a new one
+            if (!originalConfigMap) {
+                const newConfigMap: V1ConfigMap = {
+                    apiVersion: 'v1',
+                    kind: 'ConfigMap',
+                    metadata: {
+                        name: configMapName,
+                        namespace: namespace
+                    },
+                    data
+                };
+
+                const response = await this.coreApi.createNamespacedConfigMap(namespace, newConfigMap);
+                return response.body;
             }
 
-            const newConfigMap: V1ConfigMap = {
+            // Update the existing ConfigMap with new data
+            const updatedConfigMap: V1ConfigMap = {
                 apiVersion: 'v1',
                 kind: 'ConfigMap',
                 metadata: {
@@ -48,31 +61,15 @@ class K8sClient {
                 data
             };
 
-            const response = await this.coreApi.createNamespacedConfigMap(namespace, newConfigMap);
+            const response = await this.coreApi.replaceNamespacedConfigMap(configMapName, namespace, updatedConfigMap);
             return response.body;
 
         } catch (error) {
-            console.error(`Error creating ConfigMap ${configMapName} in namespace ${namespace}:`, error);
-            if (originalConfigMap) {
-                console.warn(`Recreating the original ConfigMap ${configMapName} due to error.`);
-                try {
-                    const recreateConfigMap: V1ConfigMap = {
-                        apiVersion: 'v1',
-                        kind: 'ConfigMap',
-                        metadata: {
-                            name: configMapName,
-                            namespace: namespace
-                        },
-                        data: originalConfigMap.data
-                    };
-                    await this.coreApi.createNamespacedConfigMap(namespace, recreateConfigMap);
-                } catch (recreateError) {
-                    console.error(`Failed to recreate the original ConfigMap ${configMapName}:`, recreateError);
-                }
-            }
+            console.error(`Error updating ConfigMap ${configMapName} in namespace ${namespace}:`, error);
             throw error;
         }
     }
+
 }
 
 export default K8sClient;
