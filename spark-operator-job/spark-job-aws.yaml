@@ -6,7 +6,7 @@ metadata:
 spec:
   type: Python
   mode: cluster
-  image: spark-yunikorn-docker-image
+  image: spark-aws-image
   mainApplicationFile: local:///opt/spark/source/code.py
   sparkVersion: 3.5.2
   restartPolicy:

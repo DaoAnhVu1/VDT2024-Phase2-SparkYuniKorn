@@ -40,13 +40,13 @@ export default function CreateChildForm({ parentName, parentmaxapplications }: C
     const router = useRouter();
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        if (parentmaxapplications && values.maxapplications > parentmaxapplications) {
+        if ((parentmaxapplications && values.maxapplications > parentmaxapplications) || (parentmaxapplications && !values.maxapplications)) {
             toast({
                 title: "Invalid value for max applications",
                 description: "If parent max applications is set, it must be smaller than this value.",
                 variant: "destructive" // You can use different variants for different types of messages
             });
-            return; // Stop further execution if validation fails
+            return;
         }
 
         try {
