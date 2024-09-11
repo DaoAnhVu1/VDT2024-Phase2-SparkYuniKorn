@@ -38,7 +38,7 @@ const RecursiveQueue = ({ root, partitionName, level }: RecursiveQueueProps) => 
                             <Pencil className="h-5" onClick={() => {
                                 onOpen("editQueue", { queueInfo: node, partitionName, level })
                             }} />
-                            {node.queues && (
+                            {node.queues && node.queues.length > 0 && (
                                 selectedQueue === node ? (
                                     <CircleMinus
                                         className="h-5 cursor-pointer"

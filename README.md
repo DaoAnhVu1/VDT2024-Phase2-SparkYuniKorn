@@ -75,4 +75,6 @@ kubectl apply -f ./spark-operator-job/spark-job-hadoop.yaml
 kubectl get sparkapplications -n spark
 
 kubectl delete sparkapplication spark-hadoop -n spark
+
+kubectl describe sparkapplication spark-hadoop -n spark
 ```
