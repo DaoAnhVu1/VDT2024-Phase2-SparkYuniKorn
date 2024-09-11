@@ -39,9 +39,10 @@ export async function PATCH(req: Request) {
         const updatedYaml = YAML.stringify(configMapObject);
 
         configMap.data["queues.yaml"] = updatedYaml;
-        await K8sClient.getInstance().createConfigMap("yunikorn", "yunikorn-configs", configMap.data);
+        await K8sClient.getInstance().updateConfigMap("yunikorn", "yunikorn-configs", configMap.data);
         return NextResponse.json({ message: "Partition updated successfully" }, { status: 200 });
     } catch (error) {
+        console.log(error)
         return new NextResponse("Internal Error", { status: 500 });
     }
 }
