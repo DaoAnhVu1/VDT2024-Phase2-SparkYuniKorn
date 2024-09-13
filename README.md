@@ -30,9 +30,10 @@ There are several things we need to set up on our k8s to run spark job.
     ```sh
     helm repo add spark-operator https://kubeflow.github.io/spark-operator
 
-    helm install spark-operator spark-operator/spark-operator \
+    helm install my-release spark-operator/spark-operator \
     --namespace spark-operator \
-    --create-namespace
+    --create-namespace \
+    --set webhook.enable=true
 
     kubectl get pods -n spark-operator
     ```
@@ -63,18 +64,20 @@ Our Spark application will be executed in this image and when we change the code
 ```sh
 eval $(minikube docker-env)
 docker build -t spark-aws-image ./spark-aws-image
-docker build -t spark-hadoop-image ./spark-hadoop-image
+docker build -t spark-sleep-image ./spark-sleep-image
 ```
 
 ## Step 5: Submit spark job to k8s
 In this demo, we will use the Spark Operator to submit a Spark job. This approach fully utilizes the functionality of YuniKorn, as it is easier to work with than the spark-submit command.
 
 ```sh
-kubectl apply -f ./spark-operator-job/spark-job-hadoop.yaml
+kubectl apply -f ./spark-operator-job/spark-sleep.yaml
 
 kubectl get sparkapplications -n spark
 
-kubectl delete sparkapplication spark-hadoop -n spark
+kubectl delete sparkapplication spark-sleep -n spark
 
-kubectl describe sparkapplication spark-hadoop -n spark
+kubectl describe sparkapplication spark-sleep -n spark
+
+kubectl exec -it spark-sleep-driver -n spark  -- /bin/bash
 ```

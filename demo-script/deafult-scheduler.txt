@@ -1,0 +1,24 @@
+minikube start 
+
+kubectl create namespace spark
+kubectl create serviceaccount spark -n spark
+kubectl create clusterrolebinding spark-cluster-admin-binding \
+--clusterrole=cluster-admin \
+--serviceaccount=spark:spark \
+--namespace=spark
+
+helm repo add spark-operator https://kubeflow.github.io/spark-operator
+helm install my-release spark-operator/spark-operator \
+--namespace spark-operator \
+--create-namespace \
+--set webhook.enable=true
+
+kubectl apply -f ./resourcequota/resource-quota.yaml
+
+eval $(minikube docker-env)
+docker build -t spark-sleep-image ./spark-sleep-image
+
+kubectl apply -f ./spark-operator-job/spark-sleep.yaml
+
+kubectl get resourcequota -n spark
+kubectl get sparkapplications -n spark

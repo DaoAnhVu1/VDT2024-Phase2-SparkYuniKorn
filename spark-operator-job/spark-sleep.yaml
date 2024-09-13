@@ -1,23 +1,25 @@
 apiVersion: sparkoperator.k8s.io/v1beta2
 kind: SparkApplication
 metadata:
-  name: spark-hadoop
+  name: spark-sleep
   namespace: spark
 spec:
   type: Python
   mode: cluster
-  image: spark-hadoop-image
+  image: spark-sleep-image
   mainApplicationFile: local:///opt/spark/source/code.py
   sparkVersion: 3.5.2
   restartPolicy:
     type: OnFailure
   driver:
     cores: 1
+    coreLimit: "1"
     memory: 512m
     serviceAccount: spark
     annotations:
-      yunikorn.apache.org/queue: root.spark
-      yunikorn.apache.org/schedulingPolicyParameters: "placeholderTimeoutInSeconds=30 gangSchedulingStyle=Soft"
+      yunikorn.apache.org/queue: root.spark.child1
+      yunikorn.apache.org/allow-preemption: "true"
+      yunikorn.apache.org/schedulingPolicyParameters: "placeholderTimeoutInSeconds=30 gangSchedulingStyle=Hard"
       yunikorn.apache.org/task-group-name: "spark-driver"
       yunikorn.apache.org/task-groups: |-
         [{
@@ -42,15 +44,10 @@ spec:
          }]
     labels:
       version: 3.5.2
-    envVars:
-      HADOOP_HOST: "hadoop-master"
-      CUSTOM_IP: 192.168.65.254
   executor:
     cores: 1
+    coreLimit: "1"
     memory: 512m
     instances: 1
     annotations:
       yunikorn.apache.org/task-group-name: "spark-executor"
-    envVars:
-      HADOOP_HOST: "hadoop-master"
-      CUSTOM_IP: 192.168.65.254

@@ -8,13 +8,27 @@ partitions:
           - name: spark
             maxapplications: 5
             resources:
-              guaranteed: { memory: 2G, vcore: 2 }
-          - name: other-1
+              max:
+                memory: 3G
+                vcore: 3
+            queues:
+              - name: child1
+                maxapplications: 3
+              - name: child2
+                maxapplications: 3
+                resources:
+                  guaranteed:
+                    vcore: 2
+                    memory: 3G
+          - name: other
             maxapplications: 5
             resources:
-              guaranteed: { memory: 1G, vcore: 1 }
-              max: { memory: 2G, vcore: 2 }
+              guaranteed:
+                memory: 2G
+                vcore: 2
+              max:
+                memory: 4G
+                vcore: 4
     placementrules:
-      - name: tag
-        value: namespace
+      - name: provided
         create: true
