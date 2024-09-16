@@ -3,30 +3,32 @@ import Link from "next/link"
 import Image from "next/image"
 import ViettelLogo from "@/public/logo.png"
 import { usePathname } from "next/navigation"
+import { icons, Info, Network } from "lucide-react"
 
 export default function Sidebar() {
     const pathname = usePathname()
 
     const links = [
-        { name: "Info", path: "/info" },
-        { name: "Manage Queues", path: "/manage-queue" }
+        { name: "Info", path: "/info", icon: Info },
+        { name: "Queues Config", path: "/manage-queue", icon: Network }
     ]
 
     return (
-        <div className="w-60 fixed h-screen bg-gray-300 flex flex-col items-center p-5">
-            <div className="relative w-full h-20">
-                <Image src={ViettelLogo} alt="Logo" fill className="object-contain" />
+        <div className="w-60 fixed h-screen flex flex-col items-center p-3 bg-[#1f2837]">
+            <div className="flex relative text-2xl text-white font-semibold w-full mt-4 h-20 items-center pl-2">
+                Dashboard
             </div>
-
-            <div className="w-full flex flex-col gap-3">
+            <div className="w-full flex flex-col gap-3 text-md text-white">
                 {links.map((link) => (
                     <Link
                         key={link.path}
                         href={link.path}
-                        className={"" + `${pathname === link.path ? "font-semibold" : ""
-                            }`}
+                        className={"p-2 rounded-md " + `${pathname.startsWith(link.path) ? "font-semibold" : ""}`}
                     >
-                        {link.name}
+                        <div className="flex items-center gap-2">
+                            {link.icon && <link.icon className="w-5 h-5" />}
+                            {link.name}
+                        </div>
                     </Link>
                 ))}
             </div>

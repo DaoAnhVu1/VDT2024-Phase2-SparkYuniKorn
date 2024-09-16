@@ -21,8 +21,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Sidebar />
-        <main className="ml-60">
-          {children}
+        <main className="ml-60 bg-gray-100">
+          <div className='p-4'>
+            <div className='bg-white rounded-md shadow-md'>
+              {children}
+            </div>
+          </div>
         </main>
         <Toaster />
       </body>

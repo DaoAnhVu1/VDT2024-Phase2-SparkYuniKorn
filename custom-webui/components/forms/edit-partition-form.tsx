@@ -55,7 +55,7 @@ export default function EditPartitionForm({ data, onClose }: EditPartitionFormPr
             let finalResult = { currentName: data.name, newConfig: { ...values } }
             console.log(finalResult)
             await axios.patch("/api/partition", finalResult)
-            router.refresh()
+            window.location.reload()
             onClose()
         } catch (error) {
             toast({

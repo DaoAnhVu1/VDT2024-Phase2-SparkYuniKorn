@@ -229,7 +229,7 @@ function updateQueueConfig(queue: any, queueInfo: QueueConfig, level: number): v
         }
 
         if (queueInfo.properties.priorityPolicy) {
-            queue.properties["priority.offset"] = queueInfo.properties.priorityOffset
+            queue.properties["priority.offset"] = String(queueInfo.properties.priorityOffset)
         }
 
         if (queueInfo.properties.priorityPolicy) {
