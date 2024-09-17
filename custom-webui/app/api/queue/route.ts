@@ -10,11 +10,11 @@ interface QueueConfig {
     adminacl?: string;
     resources?: {
         guaranteed?: {
-            vcore?: number;
+            vcore?: string;
             memory?: string;
         };
         max?: {
-            vcore?: number;
+            vcore?: string;
             memory?: string;
         };
     };
@@ -175,7 +175,7 @@ function updateQueueConfig(queue: any, queueInfo: QueueConfig, level: number): v
             delete queue.resources.guaranteed.memory;
         }
 
-        if (guaranteed.vcore && guaranteed.vcore !== 0) {
+        if (guaranteed.vcore && guaranteed.vcore.trim() !== "" && guaranteed.vcore.trim() !== "0") {
             queue.resources.guaranteed.vcore = guaranteed.vcore;
         } else {
             delete queue.resources.guaranteed.vcore;
@@ -197,7 +197,7 @@ function updateQueueConfig(queue: any, queueInfo: QueueConfig, level: number): v
             delete queue.resources.max.memory;
         }
 
-        if (max.vcore && max.vcore !== 0) {
+        if (max.vcore && max.vcore.trim() !== "" && max.vcore.trim() !== "0") {
             queue.resources.max.vcore = max.vcore;
         } else {
             delete queue.resources.max.vcore;

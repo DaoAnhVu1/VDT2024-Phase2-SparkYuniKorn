@@ -1,16 +1,16 @@
 "use client"
 import Link from "next/link"
-import Image from "next/image"
-import ViettelLogo from "@/public/logo.png"
 import { usePathname } from "next/navigation"
-import { icons, Info, Network } from "lucide-react"
+import { Info, Network, LayoutDashboard, Share2 } from "lucide-react"
 
 export default function Sidebar() {
     const pathname = usePathname()
 
     const links = [
         { name: "Info", path: "/info", icon: Info },
-        { name: "Queues Config", path: "/manage-queue", icon: Network }
+        { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+        { name: "Queues Config", path: "/manage-queue", icon: Network },
+        { name: "Queue Info", path: "queue-info", icon: Share2 }
     ]
 
     return (

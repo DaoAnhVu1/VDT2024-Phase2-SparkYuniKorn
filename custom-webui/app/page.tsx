@@ -14,5 +14,5 @@ export default async function Home() {
       Error getting the queue config, please check your cluster.
     </div>
   }
-  return <></>
+  redirect("/info")
 }

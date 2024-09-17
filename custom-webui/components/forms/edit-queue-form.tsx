@@ -25,7 +25,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useModal } from "@/hooks/useModal";
 
 const resourceSchema = z.object({
-    vcore: z.number().optional(),
+    vcore: z.string().optional(),
     memory: z.string().optional(),
 });
 
@@ -33,9 +33,9 @@ const propertiesSchema = z.object({
     applicationSortPolicy: z.string(),
     applicationSortPriority: z.string(),
     priorityPolicy: z.string(),
-    priorityOffset: z.number(),
+    priorityOffset: z.string(),
     preemptionPolicy: z.string(),
-    preemptionDelay: z.number()
+    preemptionDelay: z.string()
 });
 
 const formSchema = z.object({
@@ -70,11 +70,11 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
             adminacl: queueInfo?.adminacl || "",
             resources: level !== 0 ? {
                 guaranteed: {
-                    vcore: queueInfo?.resources?.guaranteed?.vcore || 0,
+                    vcore: queueInfo?.resources?.guaranteed?.vcore ? String(queueInfo?.resources?.guaranteed?.vcore) : "",
                     memory: queueInfo?.resources?.guaranteed?.memory || ""
                 },
                 max: {
-                    vcore: queueInfo?.resources?.max?.vcore || 0,
+                    vcore: queueInfo?.resources?.max?.vcore ? String(queueInfo?.resources?.max?.vcore) : "",
                     memory: queueInfo?.resources?.max?.memory || ""
                 }
             } : undefined,
@@ -82,9 +82,9 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                 applicationSortPolicy: queueInfo?.properties?.["application.sort.policy"] || "fifo",
                 applicationSortPriority: queueInfo?.properties?.["application.sort.priority"] || "enabled",
                 priorityPolicy: queueInfo?.properties?.["priority.policy"] || "default",
-                priorityOffset: parseInt(queueInfo?.properties?.["priority.offset"]) || 0,
+                priorityOffset: queueInfo?.properties?.["priority.offset"] || "-2147483648",
                 preemptionPolicy: queueInfo?.properties?.["preemption.policy"] || "default",
-                preemptionDelay: parseInt(queueInfo?.properties?.["preemption.delay"]) || 30
+                preemptionDelay: queueInfo?.properties?.["preemption.delay"] ? String(queueInfo?.properties?.["preemption.delay"]) : "30s"
             }
         }
     });
@@ -184,13 +184,8 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                                         <FormLabel>Guaranteed VCore</FormLabel>
                                         <FormControl>
                                             <Input
-                                                type="number"
                                                 placeholder="Guaranteed VCore"
-                                                onChange={(event) => {
-                                                    const value = event.target.value ? parseInt(event.target.value) : 0;
-                                                    field.onChange(value);
-                                                }}
-                                                value={field.value}
+                                                {...field}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -220,13 +215,8 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                                         <FormLabel>Max VCore</FormLabel>
                                         <FormControl>
                                             <Input
-                                                type="number"
                                                 placeholder="Max VCore"
-                                                onChange={(event) => {
-                                                    const value = event.target.value ? parseInt(event.target.value) : 0;
-                                                    field.onChange(value);
-                                                }}
-                                                value={field.value}
+                                                {...field}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -328,13 +318,8 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                                 <FormLabel>Priority Offset</FormLabel>
                                 <FormControl>
                                     <Input
-                                        type="number"
                                         placeholder="Priority Offset"
-                                        onChange={(event) => {
-                                            const value = event.target.value ? parseInt(event.target.value) : 0;
-                                            field.onChange(value);
-                                        }}
-                                        value={field.value}
+                                        {...field}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -373,10 +358,9 @@ const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFo
                                 <FormLabel>Preemption Delay</FormLabel>
                                 <FormControl>
                                     <Input
-                                        type="number"
                                         placeholder="PreemptionDelay"
                                         onChange={(event) => {
-                                            const value = event.target.value ? parseInt(event.target.value) : 0;
+                                            const value = event.target.value ? event.target.value : "";
                                             field.onChange(value);
                                         }}
                                         value={field.value}
