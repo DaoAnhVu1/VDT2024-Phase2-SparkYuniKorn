@@ -1,7 +1,7 @@
 apiVersion: sparkoperator.k8s.io/v1beta2
 kind: SparkApplication
 metadata:
-  name: spark-sleep
+  name: spark-sleep-1
   namespace: spark
 spec:
   type: Python
@@ -17,9 +17,9 @@ spec:
     memory: 512m
     serviceAccount: spark
     annotations:
-      yunikorn.apache.org/queue: root.spark.child1
+      yunikorn.apache.org/queue: root.other
       yunikorn.apache.org/allow-preemption: "true"
-      yunikorn.apache.org/schedulingPolicyParameters: "placeholderTimeoutInSeconds=30 gangSchedulingStyle=Hard"
+      yunikorn.apache.org/schedulingPolicyParameters: "placeholderTimeoutInSeconds=300 gangSchedulingStyle=Soft"
       yunikorn.apache.org/task-group-name: "spark-driver"
       yunikorn.apache.org/task-groups: |-
         [{

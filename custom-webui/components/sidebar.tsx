@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Info, Network, LayoutDashboard, Share2 } from "lucide-react"
+import { Info, Network, LayoutDashboard, Share2, icons, ReplaceAll } from "lucide-react"
 
 export default function Sidebar() {
     const pathname = usePathname()

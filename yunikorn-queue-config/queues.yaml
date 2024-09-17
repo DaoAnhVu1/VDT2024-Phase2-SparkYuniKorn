@@ -6,16 +6,16 @@ partitions:
         adminacl: "*"
         queues:
           - name: spark
-            maxapplications: 5
+            maxapplications: 10
             resources:
               max:
-                memory: 3G
-                vcore: 3
+                memory: 4G
+                vcore: 4
             queues:
               - name: child1
-                maxapplications: 3
+                maxapplications: 10
               - name: child2
-                maxapplications: 3
+                maxapplications: 10
                 resources:
                   guaranteed:
                     vcore: 2

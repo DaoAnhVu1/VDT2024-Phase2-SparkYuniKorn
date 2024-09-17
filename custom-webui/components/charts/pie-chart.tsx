@@ -20,18 +20,18 @@ interface PieChartProps {
     rawChartData: any,
     keyValue: string,
     description: string,
-    colorConfig: { [key: string]: string } // Add color config object
+    colorConfig: { [key: string]: string }
 }
 
 export function CustomPieChart({ chartTitle, rawChartData, keyValue, description, colorConfig }: PieChartProps) {
-    
+
     // Use colorConfig object to assign colors
     const chartData = Object.entries(rawChartData)
         .filter(([status]) => status !== 'total') // Exclude "total"
         .map(([status, count]) => ({
             status,
             count,
-            fill: colorConfig[status] || '#000000', // Use colorConfig or fallback to black if not found
+            fill: colorConfig[status] || '#000000',
         }));
 
     const chartConfig = Object.fromEntries(
@@ -51,14 +51,14 @@ export function CustomPieChart({ chartTitle, rawChartData, keyValue, description
     }, [chartData, keyValue])
 
     return (
-        <Card className="flex flex-col w-1/4">
+        <Card className="flex flex-col w-1/4 shadow-md">
             <CardHeader className="flex text-center pb-0 ">
                 <CardTitle>{chartTitle}</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
                 <ChartContainer
                     config={chartConfig}
-                    className="mx-auto aspect-square max-h-[250px]"
+                    className="mx-auto aspect-square w-full"
                 >
                     <PieChart>
                         <ChartTooltip
