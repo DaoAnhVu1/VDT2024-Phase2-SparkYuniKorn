@@ -5,7 +5,7 @@ metadata:
   namespace: spark
 spec:
   hard:
-    requests.cpu: "1"      
-    requests.memory: "1Gi" 
+    requests.cpu: "3"      
+    requests.memory: "4Gi" 
     limits.cpu: "10"         
     limits.memory: "10Gi"  

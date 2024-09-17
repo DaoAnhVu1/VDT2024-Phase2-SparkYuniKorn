@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: low-priority-namespace
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: high-priority-namespace
