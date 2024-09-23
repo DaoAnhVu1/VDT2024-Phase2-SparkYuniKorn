@@ -1,4 +1,4 @@
-FROM apache/spark:latest
+FROM apache/spark:3.5.2
 
 USER root
 

@@ -16,8 +16,8 @@ spec:
     memory: 512m
     serviceAccount: spark
     annotations:
-      yunikorn.apache.org/queue: root.spark
-      yunikorn.apache.org/schedulingPolicyParameters: "placeholderTimeoutInSeconds=30 gangSchedulingStyle=Soft"
+      yunikorn.apache.org/queue: root.spark.child1
+      yunikorn.apache.org/schedulingPolicyParameters: "placeholderTimeoutInSeconds=300 gangSchedulingStyle=Hard"
       yunikorn.apache.org/task-group-name: "spark-driver"
       yunikorn.apache.org/task-groups: |-
         [{

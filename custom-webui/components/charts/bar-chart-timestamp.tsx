@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import {
@@ -19,37 +19,43 @@ export const description = "A linear area chart";
 const chartConfig = {
     desktop: {
         label: "Desktop",
-        color: "#0000FF", // Changed color to blue
+        color: "#0000FF",
     },
 } satisfies ChartConfig;
 
-export function CustomBarChartForTimeStamp({ rawChartData, title }: { rawChartData: any[], title: string }) {
+export function CustomBarChartForTimeStamp({
+    rawChartData,
+    title,
+    keyField,
+}: {
+    rawChartData: any[];
+    title: string;
+    keyField: string;
+}) {
     const processChartData = (data: any[]) => {
-        const dataWithFormattedTime = data.map(entry => {
+        const dataWithFormattedTime = data.map((entry) => {
             const date = new Date(entry.timestamp / 1000000);
-            const localDate = new Date(date.getTime() + (7 * 60 * 60 * 1000));
-            const hours = localDate.getUTCHours().toString().padStart(2, '0');
-            const minutes = localDate.getUTCMinutes().toString().padStart(2, '0');
+            const localDate = new Date(date.getTime() + 7 * 60 * 60 * 1000); // Adjusting for timezone
+            const hours = localDate.getUTCHours().toString().padStart(2, "0");
+            const minutes = localDate.getUTCMinutes().toString().padStart(2, "0");
             return {
                 ...entry,
                 time: `${hours}:${minutes}`,
-                totalApplications: Number(entry.totalApplications)
+                [keyField]: Number(entry[keyField]), // Dynamic key usage
             };
         });
 
-        // Group by time
-        const groupedByTime = dataWithFormattedTime.reduce((acc: any, { time, totalApplications }) => {
+        const groupedByTime = dataWithFormattedTime.reduce((acc: any, { time, [keyField]: keyValue }) => {
             if (!acc[time]) {
                 acc[time] = 0;
             }
-            acc[time] += totalApplications;
+            acc[time] += keyValue;
             return acc;
         }, {} as Record<string, number>);
 
-        // Convert grouped data to chart format
-        return Object.entries(groupedByTime).map(([time, totalApplications]) => ({
+        return Object.entries(groupedByTime).map(([time, value]) => ({
             time,
-            totalApplications
+            [keyField]: value, // Use the dynamic keyField here
         }));
     };
 
@@ -76,18 +82,18 @@ export function CustomBarChartForTimeStamp({ rawChartData, title }: { rawChartDa
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tickFormatter={(value) => value} // Show time as HH:mm
+                            tickFormatter={(value) => value} 
                         />
                         <ChartTooltip
                             cursor={false}
                             content={<ChartTooltipContent indicator="dot" hideLabel />}
                         />
                         <Area
-                            dataKey="totalApplications"
+                            dataKey={keyField} 
                             type="linear"
-                            fill="#0000FF" // Changed color to blue
+                            fill="#0000FF" 
                             fillOpacity={0.4}
-                            stroke="#0000FF" // Changed color to blue
+                            stroke="#0000FF" 
                         />
                     </AreaChart>
                 </ChartContainer>

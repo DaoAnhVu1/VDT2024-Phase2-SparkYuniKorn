@@ -6,3 +6,9 @@ export function getApplicationPieChartColorConfig() {
         "New": "#F4B400"    // Yellow
     };
 }
+
+export function getContainersPieChartColorConfig() {
+    return {
+        "containers": "#4285F4",   // Blue
+    };
+}

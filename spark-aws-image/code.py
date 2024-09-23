@@ -13,7 +13,6 @@ print()
 spark = SparkSession.builder \
     .appName("aws_s3") \
     .getOrCreate()
-
 # Set S3 credentials
 spark._jsc.hadoopConfiguration().set("fs.s3a.access.key", aws_access)
 spark._jsc.hadoopConfiguration().set(

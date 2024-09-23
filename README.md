@@ -50,8 +50,6 @@ kubectl create namespace yunikorn
 kubectl create configmap yunikorn-configs --from-file=./yunikorn-queue-config/queues.yaml -n yunikorn
 
 helm install yunikorn yunikorn/yunikorn --namespace yunikorn
-
-kubectl port-forward svc/yunikorn-service 9889:9889 -n yunikorn
 ```
 
 ## Step 4: Build Spark Docker image for minikube
@@ -71,6 +69,8 @@ docker build -t spark-sleep-image ./spark-sleep-image
 In this demo, we will use the Spark Operator to submit a Spark job. This approach fully utilizes the functionality of YuniKorn, as it is easier to work with than the spark-submit command.
 
 ```sh
+kubectl port-forward svc/yunikorn-service 9889:9889 -n yunikorn
+
 kubectl apply -f ./spark-operator-job/spark-sleep.yaml
 
 kubectl get sparkapplications -n spark
