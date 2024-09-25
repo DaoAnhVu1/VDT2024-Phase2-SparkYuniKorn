@@ -58,7 +58,6 @@ interface EditQueueFormProps {
 }
 
 const EditQueueForm = ({ queueInfo, partitionName, onClose, level }: EditQueueFormProps) => {
-    console.log(queueInfo)
     const { toast } = useToast();
     const { onOpen } = useModal();
     const form = useForm<z.infer<typeof formSchema>>({

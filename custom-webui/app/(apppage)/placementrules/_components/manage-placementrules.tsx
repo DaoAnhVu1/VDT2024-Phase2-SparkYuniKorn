@@ -1,33 +1,29 @@
-"use client";
-
+"use client"
 import { useState } from "react";
+import PartitionManagement2 from "./partition-management";
+import RecursivePlacement from "./recursive-placement";
+import EditRuleModal from "@/components/modals/edit-rule-modal";
 
-import PartitionManagement from "./partition-management";
-import RecursiveQueue from "./recursive-queue";
-import EditPartitionModal from "@/components/modals/edit-partition-modal";
-import EditQueueModal from "@/components/modals/edit-queue-modal";
-import CreateChildModal from "@/components/modals/create-child-modal";
-import DeleteQueueModal from "@/components/modals/delete-queue-modal";
-
-interface ManageQueueProps {
+interface ManagePlacementRulesProps {
     configMapObject: any
 }
 
-export default function ManageQueue({ configMapObject }: ManageQueueProps) {
+
+export default function ManagePlacementRules({ configMapObject }: ManagePlacementRulesProps) {
     const [selectedPartition, setSelectedPartition] = useState<any>(null);
-    const [selectedQueues, setSelectedQueues] = useState<any>(null);
+    const [placementRules, setPlacementRules] = useState<any>(null);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
     function handleSetPartition(value: any) {
         setSelectedPartition(value);
         if (value) {
-            setSelectedQueues(value.queues);
+            setPlacementRules(value.placementrules)
         } else {
-            setSelectedQueues(null);
+            setPlacementRules(null)
         }
     }
+
 
     if (error) {
         return (
@@ -44,25 +40,21 @@ export default function ManageQueue({ configMapObject }: ManageQueueProps) {
             </div>
         );
     }
-
     return (
         <div className="p-5 flex flex-col min-h-screen h-screen">
             <h1 className="text-2xl font-semibold mb-5 flex justify-center items-center h-20">
-                Queues Config
+                Placement Rules
             </h1>
-            <PartitionManagement
+            <PartitionManagement2
                 setPartition={handleSetPartition}
                 selectedPartition={selectedPartition}
                 partitions={configMapObject?.partitions}
             />
             <div className="mt-5">
-                {selectedQueues ? (
+                {placementRules ? (
                     <div className="flex gap-3">
-                        <RecursiveQueue root={selectedQueues} partitionName={selectedPartition.name} level={0} />
-                        <EditPartitionModal />
-                        <EditQueueModal />
-                        <CreateChildModal />
-                        <DeleteQueueModal />
+                        <RecursivePlacement rules={placementRules} level={0} partitionName={selectedPartition.name} parent="" />
+                        <EditRuleModal />
                     </div>
                 ) : (
                     <div className="h-full w-full flex justify-center items-center">
@@ -71,5 +63,5 @@ export default function ManageQueue({ configMapObject }: ManageQueueProps) {
                 )}
             </div>
         </div>
-    );
+    )
 }

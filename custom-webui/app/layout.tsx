@@ -23,7 +23,7 @@ export default function RootLayout({
         <Sidebar />
         <main className="ml-60 bg-gray-100">
           <div className='p-4'>
-            <div className='bg-white rounded-md shadow-md'>
+            <div className='bg-white rounded-md shadow-xl'>
               {children}
             </div>
           </div>

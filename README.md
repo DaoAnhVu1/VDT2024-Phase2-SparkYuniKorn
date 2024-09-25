@@ -20,10 +20,7 @@ There are several things we need to set up on our k8s to run spark job.
 
 - Bind admin role to the service account:    
   ```sh
-  kubectl create clusterrolebinding spark-cluster-admin-binding \
-  --clusterrole=cluster-admin \
-  --serviceaccount=spark:spark \
-  --namespace=spark
+  kubectl apply -f serviceaccount/service.yaml 
   ```
 
 - Install Spark Operator
@@ -73,11 +70,11 @@ kubectl port-forward svc/yunikorn-service 9889:9889 -n yunikorn
 
 kubectl apply -f ./spark-operator-job/spark-sleep.yaml
 
+kubectl apply -f ./spark-operator-job/spark-job-aws.yaml
+
 kubectl get sparkapplications -n spark
 
 kubectl delete sparkapplication spark-sleep -n spark
 
 kubectl describe sparkapplication spark-sleep -n spark
-
-kubectl exec -it spark-sleep-driver -n spark  -- /bin/bash
 ```

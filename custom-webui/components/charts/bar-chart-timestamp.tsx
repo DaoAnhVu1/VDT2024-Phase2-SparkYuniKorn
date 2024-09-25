@@ -74,6 +74,7 @@ export function CustomBarChartForTimeStamp({
                         margin={{
                             left: 12,
                             right: 12,
+                            top:5
                         }}
                     >
                         <CartesianGrid vertical={false} />
@@ -90,7 +91,7 @@ export function CustomBarChartForTimeStamp({
                         />
                         <Area
                             dataKey={keyField} 
-                            type="linear"
+                            type="bump"
                             fill="#0000FF" 
                             fillOpacity={0.4}
                             stroke="#0000FF" 

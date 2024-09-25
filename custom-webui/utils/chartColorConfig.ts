@@ -3,7 +3,9 @@ export function getApplicationPieChartColorConfig() {
         "Failed": "#EA4335",    // Red
         "Running": "#4285F4",   // Blue
         "Completed": "#34A853", // Green
-        "New": "#F4B400"    // Yellow
+        "New": "#F4B400",       // Yellow
+        "Starting": "#ADD8E6",  // Light Blue
+        "Completing": "#90EE90" // Light Green
     };
 }
 
