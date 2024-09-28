@@ -5,7 +5,8 @@ export function getApplicationPieChartColorConfig() {
         "Completed": "#34A853", // Green
         "New": "#F4B400",       // Yellow
         "Starting": "#ADD8E6",  // Light Blue
-        "Completing": "#90EE90" // Light Green
+        "Completing": "#90EE90", // Light Greens
+        "Accepted": "#FFA500"
     };
 }
 

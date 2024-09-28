@@ -24,7 +24,9 @@ export default function EditRuleModal() {
                 <DialogHeader>
                     <DialogTitle>Rule Info</DialogTitle>
                 </DialogHeader>
-                <EditRuleForm onClose={handleClose} ruleInfo={data.ruleInfo} partitionName={data.partitionName} level={data.level} parent={data.parent} />
+                <DialogContent>
+                    <EditRuleForm onClose={handleClose} ruleInfo={data.ruleInfo} partitionName={data.partitionName} level={data.level} parent={data.parent} />
+                </DialogContent>
             </DialogContent>
         </Dialog>
     )

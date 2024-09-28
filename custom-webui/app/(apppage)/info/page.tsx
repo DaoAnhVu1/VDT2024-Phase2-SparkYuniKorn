@@ -1,11 +1,14 @@
-import { Info, Network, LayoutDashboard, Share2, ReplaceAll, Replace } from "lucide-react";
+import { Info, Network, LayoutDashboard, Replace, AppWindow, Settings } from "lucide-react";
 import Link from "next/link";
 export default function InfoPage() {
 
     const links = [
         { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard, description: "This page views the overall status of the Kubernetes Cluster and can include more metrics if needed." },
-        { name: "Queues Config", path: "/manage-queue", icon: Network, description: "Configure the queue of YuniKorn at a detailed level." },
+        { name: "Applications", path: "/application", icon: AppWindow, description: "View the details of your applications" },
+        { name: "Queues Capacity", path: "/queue-capacity", icon: Network, description: "View current queue capacity" },
+        { name: "Queues Config", path: "/manage-queue", icon: Settings, description: "Configure the queue of YuniKorn at a detailed level." },
         { name: "Placement Rules", path: "/placementrules", icon: Replace, description: "Configure the placement rules of YuniKorn in detail." },
+
     ];
 
     return (

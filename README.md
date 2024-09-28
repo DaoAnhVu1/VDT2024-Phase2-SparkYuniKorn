@@ -11,15 +11,7 @@ There are several things we need to set up on our k8s to run spark job.
 - Create a namespace:  
   ```sh
   kubectl create namespace spark
-  ```
-
-- Create a service account with namespace:  
-  ```sh
   kubectl create serviceaccount spark -n spark
-  ```
-
-- Bind admin role to the service account:    
-  ```sh
   kubectl apply -f serviceaccount/service.yaml 
   ```
 

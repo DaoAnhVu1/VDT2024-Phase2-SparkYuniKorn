@@ -70,6 +70,16 @@ class K8sClient {
         }
     }
 
+    public async getPodLogs(namespace: string, podName: string) {
+        try {
+            const response = await this.coreApi.readNamespacedPodLog(podName, namespace);
+            return response.body;
+        } catch (error) {
+            console.error(`Error getting logs for pod ${podName} in namespace ${namespace}:`, error);
+            throw error;
+        }
+    }
+
 }
 
 export default K8sClient;

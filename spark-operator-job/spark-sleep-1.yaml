@@ -27,7 +27,7 @@ spec:
             "minMember": 1,
             "minResource": {
               "cpu": "1",
-              "memory": "512Mi"
+              "memory": "1Gi"
             },
             "nodeSelector": {},
             "tolerations": [],
@@ -39,7 +39,7 @@ spec:
             "minMember": 1,
             "minResource": {
               "cpu": "1",
-              "memory": "512Mi"
+              "memory": "1Gi"
             }
          }]
     labels:

@@ -11,7 +11,6 @@ import EditQueueForm from "@/components/forms/edit-queue-form";
 export default function EditQueueModal() {
     const { data, isOpen, onClose, type } = useModal();
     const isModalOpen = isOpen && type == "editQueue";
-    console.log(data)
     const handleClose = () => {
         onClose();
     };

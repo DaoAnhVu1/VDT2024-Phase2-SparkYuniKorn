@@ -23,17 +23,17 @@ partitions:
     placementrules:
       - name: provided
         create: true
-      # - name: user
-      #   create: true
-      #   filter:
-      #     type: allow
-      #     groups:
-      #       - dev*
-      #       - deptrai
-      #       - 123
-      #     users:
-      #       - john
-      #       - sena
-      #   parent:
-      #     name: tag
-      #     value: namespace
+      - name: user
+        create: true
+        filter:
+          type: allow
+          groups:
+            - dev*
+            - deptrai
+            - 123
+          users:
+            - john
+            - sena
+        parent:
+          name: tag
+          value: namespace
